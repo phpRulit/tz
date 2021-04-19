@@ -1,0 +1,39 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "watch": "vue-cli-service build --watch --mode development",
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.8.3",
+    "a": "^2.1.2",
+    "core-js": "^3.6.5",
+    "tempusdominus-bootstrap-4": "^5.1.2",
+    "vue": "^2.6.11",
+    "vue-avatar-cropper": "^1.0.9",
+    "vue-moment": "^4.1.0",
+    "vue-toastr": "^2.1.2",
+    "vuex": "^3.4.0",
+    "vue-router": "^3.4.5"
+  },
+  "devDependencies": {
+    "axios": "^0.19",
+    "admin-lte": "^3.0.2",
+    "bootstrap-vue": "^2.5.0",
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-vuex": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "sass": "^1.15.2",
+    "sass-loader": "^10.0.2",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

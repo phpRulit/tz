@@ -1,0 +1,141 @@
+version: '3'
+services:
+  frontend-nginx:
+    build:
+      context: ./frontend/docker
+      dockerfile: nginx.docker
+    volumes:
+      - ./frontend:/var/www/frontend
+    #      - ./frontend/docker/nginx/ssl:/etc/nginx/ssl
+    #    command: [nginx-debug, '-g', 'daemon off;'] # включаем режим для разработки, перенесено в nginx.docker
+    depends_on:
+      - api-php-fpm
+    ports:
+      - "8080:80"
+    networks:
+      - frontend
+
+  frontend-nodejs:
+    image: node:10.11-jessie
+    volumes:
+      - ./frontend:/var/www/frontend
+    working_dir: /var/www/frontend
+    tty: true
+    networks:
+      - frontend
+
+  api-nginx:
+    build:
+      context: ./api/docker
+      dockerfile: nginx.docker
+    volumes:
+      - ./api:/var/www/api
+    #      - ./api/docker/nginx/ssl:/etc/nginx/ssl
+    #    command: [nginx-debug, '-g', 'daemon off;'] # включаем режим для разработки, перенесено в nginx.docker
+    ports:
+      - "8081:80"
+    networks:
+      - api
+
+  api-nodejs:
+    image: node:10.14-alpine
+    volumes:
+      - ./api:/var/www/api
+    working_dir: /var/www/api
+    tty: true
+    networks:
+      - api
+
+  api-php-fpm:
+    build:
+      context: ./api/docker
+      dockerfile: php-fpm.docker
+    volumes:
+      - ./api:/var/www/api
+      - ./storage:/var/www/storage
+    depends_on:
+      - api-mysql
+      - api-redis
+      - api-elasticsearch
+    environment:
+      - "DB_PORT=3306"
+      - "DB_HOST=api-mysql"
+      - "REDIS_PORT=6379"
+      - "REDIS_HOST=api-redis"
+      - "ELASTICSEARCH_HOSTS=api-elasticsearch:9200"
+    networks:
+      - api
+
+  api-php-cli:
+    build:
+      context: ./api/docker
+      dockerfile: php-cli.docker
+    volumes:
+      - ./api:/var/www/api
+      - ./api/storage:/var/www/api/storage
+    depends_on:
+      - api-mysql
+      - api-redis
+      - api-elasticsearch
+    environment:
+      - "DB_PORT=3306"
+      - "DB_HOST=api-mysql"
+      - "REDIS_PORT=6379"
+      - "REDIS_HOST=api-redis"
+      - "ELASTICSEARCH_HOSTS=api-elasticsearch:9200"
+    working_dir: /var/www/api
+    tty: true
+    networks:
+      - api
+
+  api-mysql:
+    image: mysql:5.7
+    volumes:
+      - ./api/storage/docker/mysql:/var/lib/mysql
+    environment:
+      - "MYSQL_ROOT_PASSWORD=357968"
+      - "MYSQL_USER=app"
+      - "MYSQL_PASSWORD=secret"
+      - "MYSQL_DATABASE=pts"
+    ports:
+      - "33062:3306"
+    networks:
+      - api
+
+  api-redis:
+    image: redis:3.0
+    ports:
+      - "63792:6379"
+    networks:
+      - api
+
+  api-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+    container_name: api-elasticsearch
+    restart: always
+    environment:
+      - transport.host=localhost
+      - transport.tcp.port=9300
+      - http.port=9200
+      - network.host=0.0.0.0
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node
+    #      - http.cors.enabled=true
+    #      - http.cors.allow-origin="*"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./api/storage/docker/elasticsearch:/usr/share/api/elasticsearch/data
+    ports:
+      - 9201:9200
+    networks:
+      - api
+
+networks:
+  frontend:
+    driver: bridge
+  api:
+    driver: bridge

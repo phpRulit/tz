@@ -1,0 +1,65 @@
+@import "~bootstrap/scss/bootstrap";
+
+.spanHover:hover {
+  color: aqua;
+  cursor: pointer;
+}
+
+.counterAtCol {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  color: deepskyblue;
+  top: 10px;
+  left: 145px;
+  position: absolute;
+}
+
+//Модальное окно
+.fixed-overlay {
+  position: fixed;
+  overflow: auto;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 105%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 9999;
+}
+.modal-dialog {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+}
+.modal-content {
+  padding: 5px;
+  background-color: #fff;
+  color: #000;
+  margin-bottom: 50px;
+}
+
+.class-w400px {
+  width: 400px;
+}
+
+.modal-dialog-w-90pcnt {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: 90%;
+}
+
+.class-w90pcnt {
+  width: 80vw;
+  min-height: 97%;
+}
+
+//убираем стрелку у input type number
+.raz {
+  -moz-appearance: textfield;
+}
+.raz::-webkit-inner-spin-button {
+  display: none;
+}
